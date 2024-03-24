@@ -36,12 +36,14 @@ class MasterController extends Controller
         $resultMemori = [];
         $resultRAM = [];
         $resultChipset = [];
+        $resultBaterai = [];
 
         $harga = $this->sparql->query('SELECT * WHERE{?harga a smartphone:Harga}');
         $prioritas = $this->sparql->query('SELECT * WHERE{?prioritas a smartphone:PrioritasKegunaan}');
         $memori = $this->sparql->query('SELECT * WHERE {?memori a smartphone:Memori}');
         $ram = $this->sparql->query('SELECT * WHERE{?ram a smartphone:RAM}');
         $chipset = $this->sparql->query('SELECT * WHERE{?chipset a smartphone:Chipset}');
+        $baterai = $this->sparql->query('SELECT * WHERE{?baterai a smartphone:Baterai}');
         
         foreach ($harga as $item) {
             $d = $this->parseData($item->harga->getUri());
@@ -63,6 +65,10 @@ class MasterController extends Controller
             $d = $this->parseData($item->chipset->getUri());
             array_push($resultChipset, $d);
         }
+        foreach ($baterai as $item) {
+            $d = $this->parseData($item->baterai->getUri());
+            array_push($resultBaterai, $d);
+        }
 
         return response()->json([
             'data'=>[
@@ -71,6 +77,7 @@ class MasterController extends Controller
                 'memori'=>$resultMemori,
                 'RAM'=>$resultRAM,
                 'chipset'=>$resultChipset,
+                'baterai'=>$resultBaterai,
             ], 
         ]);
     }
@@ -166,6 +173,15 @@ class MasterController extends Controller
                 }
                 else{
                     $query = $query . '. ?smartphone smartphone:memilikiChipset smartphone:' . $request->chipset;
+                }
+            }
+            if ($request->baterai!= '') {
+                if ($i == 0) {
+                    $query = $query . '?smartphone smartphone:memilikiBaterai smartphone:' . $request->baterai;
+                    $i++;
+                }
+                else{
+                    $query = $query . '. ?smartphone smartphone:memilikiBaterai smartphone:' . $request->baterai;
                 }
             }
 
