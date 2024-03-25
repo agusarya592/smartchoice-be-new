@@ -12,6 +12,8 @@ class MasterController extends Controller
      * @param  int  $id
      * @return Response
      */
+
+     
     public function getMerk()
     {
         $data = [];
@@ -81,6 +83,29 @@ class MasterController extends Controller
             ], 
         ]);
     }
+
+    public function getAllData()
+     {
+         $data = [];
+         $query='SELECT * WHERE {?smartphone a smartphone:Smartphone .?smartphone smartphone:seri_smartphone ?seri .?smartphone smartphone:gambar ?gambar}';
+         $smartphones = $this->sparql->query($query);
+         
+         foreach ($smartphones as $item) {
+             $brandName = $this->parseData($item->smartphone->getUri());
+             $gambar = $this->parseData($item->gambar->getValue());
+             $seri = $this->parseData($item->seri->getValue());
+             $data[] = [
+                 'name' => $brandName,
+                 'gambar' => $gambar,
+                 'seri' => $seri,
+             ];
+         }
+ 
+         return response()->json([
+             'data'=>$data, 
+             'query'=>$query
+         ]);
+     }
 
     public function jelajah(Request $request, $merk)
     {

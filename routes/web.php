@@ -17,6 +17,7 @@ use App\Http\Controllers\PenjelajahanController;
 $router->get('/', function () use ($router) {
     return $router->app->version();
 });
+$router->get('/dashboard', 'MasterController@getAllData');
 $router->get('/merk', 'MasterController@getMerk');
 $router->get('/categories', 'MasterController@getCategories');
 $router->get('/penjelajahan/{merk}', 'MasterController@jelajah');
